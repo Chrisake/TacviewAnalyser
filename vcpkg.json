@@ -1,0 +1,8 @@
+{
+  "dependencies": [
+    "boost-program-options",
+    "minizip",
+    "nlohmann-json",
+    "indicators"
+  ]
+}
