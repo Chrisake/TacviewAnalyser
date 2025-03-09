@@ -17,7 +17,14 @@ find_package(minizip REQUIRED)
 find_package(indicators REQUIRED)
 
 # Add source to this project's executable.
-add_executable (${PROJECT_NAME}   "src/main.cpp" "src/cache.cpp" "src/sim_object.cpp" "src/tac_file.cpp" "src/utils.cpp" "src/tac_file_load.cpp" "src/tac_file_load2.cpp")
+add_executable (${PROJECT_NAME}   
+		"src/main.cpp" 
+		"src/cache.cpp" 
+		"src/sim_object.cpp" 
+		"src/tac_file.cpp" 
+		"src/utils.cpp" 
+		"src/tac_file_load.cpp" 
+		"src/tac_file_load2.cpp")
 
 target_include_directories(${PROJECT_NAME} PRIVATE "include")
 
