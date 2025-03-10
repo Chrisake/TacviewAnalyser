@@ -34,3 +34,5 @@
 /out/build
 
 vcpkg_installed/
+
+out/
