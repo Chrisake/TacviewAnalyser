@@ -7,7 +7,7 @@ set(PROJECT_MAJOR_VERSION 0)
 set(PROJECT_MINOR_VERSION 1)
 
 # Enable Hot Reload for MSVC compilers if supported.
-if (POLICY CMP0141)
+if (MSVC AND POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
@@ -41,6 +41,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE minizip::minizip)
 target_link_libraries(${PROJECT_NAME} PRIVATE indicators::indicators)
 
 include(InstallRequiredSystemLibraries)
+set(CPACK_PACKAGE_DIRECTORY ${CMAKE_BINARY_DIR}/package)
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "TacviewAnalyser")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/License")
@@ -49,14 +50,11 @@ set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_MINOR_VERSION}")
 set(CPACK_GENERATOR "NSIS")
 set(CPACK_SOURCE_GENERATOR "NSIS")
 
-# Specify the installer script
-set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
-    !include ${CMAKE_SOURCE_DIR}\\NSIS_inst_registry.nsh
-")
+MESSAGE(STATUS "Test: This is a test")
 
-set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
-	!include ${CMAKE_SOURCE_DIR}\\NSIS_uninst_registry.nsh
-")
+# Specify the installer script
+set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "!include ${CMAKE_SOURCE_DIR}\\NSIS_inst_registry.nsh")
+set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "!include ${CMAKE_SOURCE_DIR}\\NSIS_uninst_registry.nsh")
 
 include(CPack)
 
