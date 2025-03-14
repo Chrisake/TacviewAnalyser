@@ -3,6 +3,7 @@
 #include <limits>
 #include <regex>
 
+#include <string_view>
 #include "utils.hpp"
 
 #define PROXIMITY_LONG_THRESHOLD 0.003
@@ -122,10 +123,10 @@ SimObject::SimObject(const uint32_t id, const std::string& name,
       name(name),
       spawn_time(time),
       spawn_location(location),
-      last_location(location),
-      last_update(time),
-      despawn_location(),
       despawn_time(-1),
+      despawn_location(),
+      last_update(time),
+      last_location(location),
       collided_with(nullptr) {
   if (coal == "Red") {
     this->coalition = RED;
@@ -174,19 +175,25 @@ void SimObject::Print(std::ostream& strm, bool showTime, bool showCollision,
 
 const Location& SimObject::getLastLocation() const { return last_location; }
 
-bool SimObject::launched_missile(Missile* rhs) { return false; }
+bool SimObject::launched_missile([[maybe_unused]] Missile* rhs) {
+  return false;
+}
 
 const std::string& SimObject::getName() const { return name; }
 
-const std::string& SimObject::getPilotName() const { return ""; }
+const std::string& SimObject::getPilotName() const {
+  static const std::string default_pilot = " - ";
+  return default_pilot;
+}
 
 const std::string& Plane::getPilotName() const { return pilot_name; }
 
 const std::string& Missile::getPilotName() const {
+  static const std::string default_pilot = "unknown";
   if (parent)
     return parent->getPilotName();
   else
-    return "unknown";
+    return default_pilot;
 }
 
 bool Plane::launched_missile(Missile* rhs) {

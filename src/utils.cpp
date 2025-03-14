@@ -1,5 +1,7 @@
 #include "utils.hpp"
 
+#include <string>
+
 int unzip_file(const std::filesystem::path &origin,
                const std::filesystem::path &destination) {
   std::string orig = origin.string();
@@ -70,7 +72,6 @@ int unzip_file(const std::filesystem::path &origin,
 
 void printDuration(std::chrono::milliseconds duration, std::ostream &strm) {
   // Calculate hours, minutes, seconds, and remaining milliseconds
-  uint64_t total_milliseconds = duration.count();
   auto hours = std::chrono::duration_cast<std::chrono::hours>(duration);
   duration -= hours;
   auto minutes = std::chrono::duration_cast<std::chrono::minutes>(duration);

@@ -37,14 +37,15 @@ class SimObject {
   Location spawn_location;
   std::chrono::milliseconds despawn_time;
   Location despawn_location;
-  Location last_location;
   std::chrono::milliseconds last_update;
+  Location last_location;
   coalition_t coalition;
   const SimObject* collided_with;
  public:
   SimObject(const uint32_t id, const std::string& name,
             const std::chrono::milliseconds& time, const Location& location,
             const std::string& coalition);
+  virtual ~SimObject() = default;
   void update(const Location& new_location,
               const std::chrono::milliseconds& time);
   void despawn(const std::chrono::milliseconds& time);

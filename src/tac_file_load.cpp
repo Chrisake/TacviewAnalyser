@@ -77,7 +77,6 @@ void TacFile::LoadFileWithChunks(const std::filesystem::path& filepath) {
   }
 
   std::string path = txt_file_path->string();
-  uint64_t fileSize = std::filesystem::file_size(*txt_file_path);
 
   MEASURE_TIME(
       file_read_time, std::ifstream file(path); if (!file.is_open()) {

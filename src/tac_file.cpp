@@ -50,7 +50,7 @@ std::filesystem::path* TacFile::PrepareACMIFile(
 
 void TacFile::PrintPlayers(std::ostream& strm) {
   std::vector<const std::string*> players;
-  size_t n = pilot_runs.size();
+  uint32_t n = static_cast<uint32_t>(pilot_runs.size());
   players.reserve(n);
   for (const auto& [pilot, planes] : pilot_runs) {
     players.push_back(&pilot);
@@ -66,7 +66,7 @@ void TacFile::PrintPlayers(std::ostream& strm) {
                      [](const std::string* a, const std::string* b) {
                        return a->size() < b->size();
                      });
-  uint32_t maxSize = 30;
+  uint32_t maxSize = static_cast<uint32_t>((*it)->size());
   uint32_t columns = 5;
   uint32_t columnWidth = maxSize + 2;
   uint32_t rows = (n + columns - 1) / columns;

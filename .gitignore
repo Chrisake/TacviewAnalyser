@@ -36,3 +36,5 @@
 vcpkg_installed/
 
 out/
+
+app.aps

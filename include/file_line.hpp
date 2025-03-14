@@ -8,6 +8,7 @@ class FileLine {
 
  public:
   FileLine(uint32_t id) : id(id) {};
+  virtual ~FileLine() = default;
   virtual void ProcessLine(
       std::unordered_map<uint32_t, SimObject*>& active_objects,
       std::vector<std::unique_ptr<SimObject>>& tracked_objects,
@@ -35,10 +36,10 @@ class SpawnLine : public FileLine {
         group(group),
         color(color) {};
   void ProcessLine(
-      std::unordered_map<uint32_t, SimObject*>& active_objects,
-      std::vector<std::unique_ptr<SimObject>>& tracked_objects,
-      std::unordered_map<std::string, std::vector<Plane*>>& pilot_runs,
-      std::chrono::milliseconds& cur_time) const {
+      [[maybe_unused]] std::unordered_map<uint32_t, SimObject*>& active_objects,
+      [[maybe_unused]] std::vector<std::unique_ptr<SimObject>>& tracked_objects,
+      [[maybe_unused]] std::unordered_map<std::string, std::vector<Plane*>>& pilot_runs,
+      [[maybe_unused]] std::chrono::milliseconds& cur_time) const {
     SimObject* obj = nullptr;
     if (type == "Air+FixedWing") {
       auto new_plane =
@@ -73,10 +74,11 @@ class UpdateLine : public FileLine {
   UpdateLine(uint32_t id, const std::string& loc)
       : FileLine(id), location(Location::parseFromString(loc)) {};
   void ProcessLine(
-      std::unordered_map<uint32_t, SimObject*>& active_objects,
-      std::vector<std::unique_ptr<SimObject>>& tracked_objects,
-      std::unordered_map<std::string, std::vector<Plane*>>& pilot_runs,
-      std::chrono::milliseconds& cur_time) const {
+      [[maybe_unused]] std::unordered_map<uint32_t, SimObject*>& active_objects,
+      [[maybe_unused]] std::vector<std::unique_ptr<SimObject>>& tracked_objects,
+      [[maybe_unused]] std::unordered_map<std::string, std::vector<Plane*>>&
+          pilot_runs,
+      [[maybe_unused]] std::chrono::milliseconds& cur_time) const {
     auto it = active_objects.find(id);
     if (it != active_objects.end()) {
       it->second->update(location, cur_time);
@@ -88,10 +90,11 @@ class DespawnLine : public FileLine {
  public:
   DespawnLine(uint32_t id) : FileLine(id) {};
   void ProcessLine(
-      std::unordered_map<uint32_t, SimObject*>& active_objects,
-      std::vector<std::unique_ptr<SimObject>>& tracked_objects,
-      std::unordered_map<std::string, std::vector<Plane*>>& pilot_runs,
-      std::chrono::milliseconds& cur_time) const {
+      [[maybe_unused]] std::unordered_map<uint32_t, SimObject*>& active_objects,
+      [[maybe_unused]] std::vector<std::unique_ptr<SimObject>>& tracked_objects,
+      [[maybe_unused]] std::unordered_map<std::string, std::vector<Plane*>>&
+          pilot_runs,
+      [[maybe_unused]] std::chrono::milliseconds& cur_time) const {
     auto it = active_objects.find(id);
     if (it != active_objects.end()) {
       it->second->despawn(cur_time);
@@ -115,12 +118,12 @@ class TimestampLine : public FileLine {
 
  public:
   TimestampLine(const std::string& time)
-      : FileLine(id), time(static_cast<uint64_t>(std::stof(time) * 1000)) {};
+      : FileLine(0), time(static_cast<uint64_t>(std::stof(time) * 1000)) {};
   void ProcessLine(
-      std::unordered_map<uint32_t, SimObject*>& active_objects,
-      std::vector<std::unique_ptr<SimObject>>& tracked_objects,
-      std::unordered_map<std::string, std::vector<Plane*>>& pilot_runs,
-      std::chrono::milliseconds& cur_time) const {
+      [[maybe_unused]] std::unordered_map<uint32_t, SimObject*>& active_objects,
+      [[maybe_unused]] std::vector<std::unique_ptr<SimObject>>& tracked_objects,
+      [[maybe_unused]] std::unordered_map<std::string, std::vector<Plane*>>& pilot_runs,
+      [[maybe_unused]] std::chrono::milliseconds& cur_time) const {
     cur_time = time;
   }
 };

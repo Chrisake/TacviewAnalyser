@@ -13,7 +13,6 @@ class TacFile {
   static void AnalyseChunk(const std::string& fileContents,
                            std::vector<std::unique_ptr<FileLine>>& lines,
                            size_t startIdx, size_t endIdx, size_t &progress);
-  void LoadFileOptimized(const std::filesystem::path& filepath);
   void LoadFileWithChunks(const std::filesystem::path& filepath);
 
  protected:
