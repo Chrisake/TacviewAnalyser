@@ -63,9 +63,9 @@ void TacFile::PrintPlayers(std::ostream& strm) {
              });
        });
   auto it = std::max_element(players.begin(), players.end(),
-                     [](const std::string* a, const std::string* b) {
-                       return a->size() < b->size();
-                     });
+                             [](const std::string* a, const std::string* b) {
+                               return a->size() < b->size();
+                             });
   uint32_t maxSize = static_cast<uint32_t>((*it)->size());
   uint32_t columns = 5;
   uint32_t columnWidth = maxSize + 2;
@@ -78,6 +78,20 @@ void TacFile::PrintPlayers(std::ostream& strm) {
       }
     }
     strm << "\n";
+  }
+}
+
+void TacFile::PrintAllPlayerRuns(std::ostream& strm) {
+  for (auto it = pilot_runs.begin(); it != pilot_runs.end(); ++it) {
+    for (const auto& plane : it->second) {
+      plane->Print(strm, true, true, true, true, true);
+      strm << "\n";
+      for (const auto& mis : plane->getMissiles()) {
+        strm << "\t";
+        mis->Print(strm, true, true, false, false, false);
+        strm << "\n";
+      }
+    }
   }
 }
 

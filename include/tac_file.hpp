@@ -27,5 +27,6 @@ class TacFile {
   void LoadFile(const std::filesystem::path& filepath);
 
   void PrintPlayers(std::ostream& strm);
+  void PrintAllPlayerRuns(std::ostream& strm);
   void PrintPlayerRuns(std::ostream& strm, const std::string& username);
 };
