@@ -36,6 +36,40 @@
       }
     },
     {
+      "name": "linux-gcc-base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc.exe",
+        "CMAKE_CXX_COMPILER": "g++.exe",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "linux-clang-base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang.exe",
+        "CMAKE_CXX_COMPILER": "clang++.exe",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
       "name": "winx64-msvc-debug",
       "displayName": "MSVC x64 Debug",
       "inherits": "windows-msvc-base",
@@ -45,6 +79,14 @@
       },
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "winx64-msvc-relwithdebinfo",
+      "displayName": "MSVC x64 RelWithDebInfo",
+      "inherits": "winx64-msvc-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     },
     {
@@ -68,6 +110,14 @@
       }
     },
     {
+      "name": "winx86-msvc-relwithdebinfo",
+      "displayName": "MSVC x86 RelWithDebInfo",
+      "inherits": "winx86-msvc-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
       "name": "winx86-msvc-release",
       "displayName": "MSVC x86 Release",
       "inherits": "winx86-msvc-debug",
@@ -85,6 +135,22 @@
       },
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
+      },
+      "environment": {
+        "CFLAGS": "--target=amd64-pc-windows-msvc -fdiagnostics-absolute-paths",
+        "CXXFLAGS": "--target=amd64-pc-windows-msvc -fdiagnostics-absolute-paths"
+      }
+    },
+    {
+      "name": "winx64-clang-relwithdebinfo",
+      "displayName": "Clang x64 RelWithDebInfo",
+      "inherits": "winx64-clang-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      },
+      "environment": {
+        "CFLAGS": "--target=amd64-pc-windows-msvc -fdiagnostics-absolute-paths",
+        "CXXFLAGS": "--target=amd64-pc-windows-msvc -fdiagnostics-absolute-paths"
       }
     },
     {
@@ -93,6 +159,10 @@
       "inherits": "winx64-clang-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
+      },
+      "environment": {
+        "CFLAGS": "--target=amd64-pc-windows-msvc -fdiagnostics-absolute-paths",
+        "CXXFLAGS": "--target=amd64-pc-windows-msvc -fdiagnostics-absolute-paths"
       }
     },
     {
@@ -105,6 +175,22 @@
       },
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
+      },
+      "environment": {
+        "CFLAGS": "--target=i686-pc-windows-msvc -fdiagnostics-absolute-paths",
+        "CXXFLAGS": "--target=i686-pc-windows-msvc -fdiagnostics-absolute-paths"
+      }
+    },
+    {
+      "name": "winx86-clang-relwithdebinfo",
+      "displayName": "Clang x86 RelWithDebInfo",
+      "inherits": "winx86-clang-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      },
+      "environment": {
+        "CFLAGS": "--target=i686-pc-windows-msvc -fdiagnostics-absolute-paths",
+        "CXXFLAGS": "--target=i686-pc-windows-msvc -fdiagnostics-absolute-paths"
       }
     },
     {
@@ -113,26 +199,122 @@
       "inherits": "winx86-clang-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
+      },
+      "environment": {
+        "CFLAGS": "--target=i686-pc-windows-msvc -fdiagnostics-absolute-paths",
+        "CXXFLAGS": "--target=i686-pc-windows-msvc -fdiagnostics-absolute-paths"
       }
     },
     {
-      "name": "linux-debug",
-      "displayName": "Linux Debug",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/out/build/${presetName}",
-      "installDir": "${sourceDir}/out/install/${presetName}",
+      "name": "linuxx64-gcc-debug",
+      "displayName": "GCC x64 Debug",
+      "inherits": "linux-gcc-base",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "linuxx64-gcc-relwithdebinfo",
+      "displayName": "GCC x64 RelWithDebInfo",
+      "inherits": "linuxx64-gcc-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "linuxx64-gcc-release",
+      "displayName": "GCC x64 Release",
+      "inherits": "linuxx64-gcc-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "linuxx86-gcc-debug",
+      "displayName": "GCC x86 Debug",
+      "inherits": "linux-gcc-base",
+      "architecture": {
+        "value": "x86",
+        "strategy": "external"
       },
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Linux"
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "linuxx86-gcc-relwithdebinfo",
+      "displayName": "GCC x86 RelWithDebInfo",
+      "inherits": "linuxx86-gcc-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "linuxx86-gcc-release",
+      "displayName": "GCC x86 Release",
+      "inherits": "linuxx86-gcc-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "linuxx64-clang-debug",
+      "displayName": "Clang x64 Debug",
+      "inherits": "linux-clang-base",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
       },
-      "vendor": {
-        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-          "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
-        }
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "linuxx64-clang-relwithdebinfo",
+      "displayName": "Clang x64 RelWithDebInfo",
+      "inherits": "linuxx64-clang-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "linuxx64-clang-release",
+      "displayName": "Clang x64 Release",
+      "inherits": "linuxx64-clang-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "linuxx86-clang-debug",
+      "displayName": "Clang x86 Debug",
+      "inherits": "linux-clang-base",
+      "architecture": {
+        "value": "x86",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "linuxx86-clang-relwithdebinfo",
+      "displayName": "Clang x86 RelWithDebInfo",
+      "inherits": "linuxx86-clang-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "linuxx86-clang-release",
+      "displayName": "Clang x86 Release",
+      "inherits": "linuxx86-clang-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
       }
     }
   ]
