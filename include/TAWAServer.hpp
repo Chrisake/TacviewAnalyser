@@ -4,28 +4,18 @@
 using namespace drogon;
 namespace api {
 namespace v1 {
-class User : public drogon::HttpController<User> {
+class Pilot : public drogon::HttpController<Pilot> {
  public:
   METHOD_LIST_BEGIN
   // use METHOD_ADD to add your custom processing function here;
-  METHOD_ADD(User::getInfo, "/{id}", Get);  // path is /api/v1/User/{arg1}
-  METHOD_ADD(User::getDetailInfo, "/{id}/detailinfo",
-             Get);  // path is /api/v1/User/{arg1}/detailinfo
-  METHOD_ADD(User::newUser, "/{name}", Post);  // path is /api/v1/User/{arg1}
+  METHOD_ADD(Pilot::getPilots, "/", Get);  // path is /api/v1/Pilot/
   METHOD_LIST_END
   // your declaration of processing function maybe like this:
-  void getInfo(const HttpRequestPtr &req,
-               std::function<void(const HttpResponsePtr &)> &&callback,
-               int userId) const;
-  void getDetailInfo(const HttpRequestPtr &req,
-                     std::function<void(const HttpResponsePtr &)> &&callback,
-                     int userId) const;
-  void newUser(const HttpRequestPtr &req,
-               std::function<void(const HttpResponsePtr &)> &&callback,
-               std::string &&userName);
+  void getPilots(const HttpRequestPtr &req,
+               std::function<void(const HttpResponsePtr &)> &&callback) const;
 
  public:
-  User() { LOG_DEBUG << "User constructor!"; }
+  Pilot() = default;
 };
 }  // namespace v1
 }  // namespace api

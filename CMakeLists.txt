@@ -16,6 +16,8 @@ find_package(nlohmann_json CONFIG REQUIRED)
 find_package(unofficial-minizip CONFIG REQUIRED) 
 find_package(indicators CONFIG REQUIRED)
 find_package(Drogon CONFIG REQUIRED)
+find_package(libpqxx CONFIG REQUIRED)
+find_package(yaml-cpp CONFIG REQUIRED)
 
 
 # Add source to this project's executable.
@@ -27,16 +29,22 @@ add_executable (${PROJECT_NAME}
 		"src/utils.cpp" 
 		"src/tac_file_load.cpp"
 		"src/TAWAServer.cpp"
+		"src/data_service.cpp" 
+		"src/server_configuration.cpp"
 		app.rc
- "src/data_service.cpp")
+)
 
 target_include_directories(${PROJECT_NAME} PRIVATE "include")
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Boost::program_options)
-target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
-target_link_libraries(${PROJECT_NAME} PRIVATE unofficial::minizip::minizip)
-target_link_libraries(${PROJECT_NAME} PRIVATE indicators::indicators)
-target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon)
+target_link_libraries(${PROJECT_NAME} PRIVATE 
+	Boost::program_options
+	nlohmann_json::nlohmann_json
+	unofficial::minizip::minizip
+	indicators::indicators
+	Drogon::Drogon
+	libpqxx::pqxx
+	yaml-cpp::yaml-cpp
+)
 
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_DIRECTORY ${CMAKE_BINARY_DIR}/package)

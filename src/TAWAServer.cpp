@@ -1,34 +1,42 @@
 #include "TAWAServer.hpp"
 
-void api::v1::User::getInfo(
-    [[maybe_unused]] const HttpRequestPtr& req,
-    std::function<void(const HttpResponsePtr&)>&& callback, int userId) const {
-  Json::Value json;
-  json["result"] = "ok";
-  json["message"] = "GetInfo: UserId[" + std::to_string(userId) + "]";
-  auto resp = HttpResponse::newHttpJsonResponse(json);
-  callback(resp);
-}
+#include "global.hpp"
+#include "nlohmann/json.hpp"
 
-void api::v1::User::getDetailInfo(
-    [[maybe_unused]] const HttpRequestPtr& req,
-    std::function<void(const HttpResponsePtr&)>&& callback, int userId) const {
-  Json::Value json;
-  json["result"] = "ok";
-  json["message"] = "GetDetailInfo: UserId[" + std::to_string(userId) + "]";
-  auto resp = HttpResponse::newHttpJsonResponse(json);
-  callback(resp);
-}
+using json = nlohmann::json;
 
-void api::v1::User::newUser(
+void api::v1::Pilot::getPilots(
     [[maybe_unused]] const HttpRequestPtr& req,
-    std::function<void(const HttpResponsePtr&)>&& callback,
-    std::string&& userName) {
-  Json::Value json;
-  json["result"] = "ok";
-  json["message"] = "NewUser";
-  json["username"] = userName;
-  json["userId"] = rand() % 1000;
-  auto resp = HttpResponse::newHttpJsonResponse(json);
-  callback(resp);
+    std::function<void(const HttpResponsePtr&)>&& callback) const {
+  auto qres = data_service->ExecuteQuery("SELECT t.* FROM main.pilot t LIMIT 501");
+  if (!qres) {
+    auto resp = HttpResponse::newHttpResponse(
+        drogon::HttpStatusCode::k500InternalServerError,
+        drogon::CT_APPLICATION_JSON);
+    json res = {
+        {"result", "error"},
+        {"message", "Internal Server Error"},
+    };
+    resp->setBody(res.dump());
+    callback(resp);
+    return;
+  } else {
+    json pilotArray = {};
+    for (auto row : *qres) {
+      json pilot = {
+          {"id", row["id"].as<int>()},
+          {"username", row["username"].as<std::string>()}
+      };
+      pilotArray.push_back(pilot);
+    }
+    json res = {
+        {"result", "ok"},
+        {"pilots", pilotArray},
+    };
+    auto resp = HttpResponse::newHttpResponse(drogon::HttpStatusCode::k200OK,
+                                              drogon::CT_APPLICATION_JSON);
+    resp->setBody(res.dump());
+    callback(resp);
+    return;
+  }
 }
