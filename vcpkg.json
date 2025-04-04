@@ -3,6 +3,7 @@
     "boost-program-options",
     "indicators",
     "minizip",
-    "nlohmann-json"
+    "nlohmann-json",
+    "drogon"
   ]
 }

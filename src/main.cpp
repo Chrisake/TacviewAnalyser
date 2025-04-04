@@ -1,20 +1,32 @@
-#include <Windows.h>
+#include "cache.hpp"
+#include "global.hpp"
+#include "tac_file.hpp"
+
+#include <drogon/drogon.h>
 
 #include <boost/program_options.hpp>
 #include <iostream>
 #include <memory>
 #include <string>
 
-#include "cache.hpp"
-#include "global.hpp"
-#include "tac_file.hpp"
-
+#include <Windows.h>
 namespace po = boost::program_options;
 
 std::filesystem::path exe_path;
 std::filesystem::path exe_dir;
 
 int main(int argc, char** argv) {
+  drogon::app()
+      .setLogPath("./")
+      .setLogLevel(trantor::Logger::kWarn)
+      .addListener("0.0.0.0", 80)
+      .setThreadNum(16)
+      .run();
+
+  while (true) {
+    Sleep(1000);
+  }
+
   exe_path = std::filesystem::path(argv[0]);
   exe_dir = exe_path.parent_path();
 
@@ -22,8 +34,8 @@ int main(int argc, char** argv) {
   cache.LoadCache();*/
 
   po::options_description opts_desc("Allowed options");
-  opts_desc.add_options()("help", "")(
-      "input-file", po::value<std::string>(), "TacView file to analyse");
+  opts_desc.add_options()("help", "")("input-file", po::value<std::string>(),
+                                      "TacView file to analyse");
 
   po::positional_options_description pos_opts_desc;
   pos_opts_desc.add("input-file", 1);
