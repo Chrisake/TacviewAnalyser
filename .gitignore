@@ -38,3 +38,7 @@ vcpkg_installed/
 out/
 
 app.aps
+
+.idea/
+
+external/

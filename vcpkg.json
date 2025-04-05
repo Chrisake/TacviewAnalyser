@@ -1,8 +1,11 @@
 {
   "dependencies": [
     "boost-program-options",
+    "drogon",
     "indicators",
+    "libpqxx",
     "minizip",
-    "nlohmann-json"
+    "nlohmann-json",
+    "yaml-cpp"
   ]
 }
