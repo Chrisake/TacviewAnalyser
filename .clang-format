@@ -1,0 +1,11 @@
+BasedOnStyle: Google
+ColumnLimit: 120
+AlignConsecutiveDeclarations: true
+AlignConsecutiveMacros: true
+BreakBeforeBraces: Attach
+PenaltyBreakBeforeFirstCallParameter: 1000000
+AllowAllParametersOfDeclarationOnNextLine: false
+BinPackParameters: false
+IndentWrappedFunctionNames: false
+PointerAlignment: Right
+DerivePointerAlignment: false
