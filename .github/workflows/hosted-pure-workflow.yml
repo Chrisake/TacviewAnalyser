@@ -9,19 +9,15 @@
 # your development machines (i.e. CMake, vcpkg, Ninja) to ensure a perfectly identical
 # and reproducible local build (on your development machine) and a remote build on
 # build agents.
-name: hosted-pure-workflow
+name: build-packages
 on:
-  push:
   pull_request:
     branches:
     - master
-  workflow_dispatch:
-  schedule:
-  - cron: '0 1 * * *'
 
 jobs:
   job:
-    name: ${{ matrix.os }}-${{ github.workflow }}
+    name: ${{ matrix.config }}-${{ github.workflow }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
