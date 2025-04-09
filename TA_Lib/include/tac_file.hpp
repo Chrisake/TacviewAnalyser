@@ -13,7 +13,7 @@ class TacFile {
   static void AnalyseChunk(const std::string& fileContents,
                            std::vector<std::unique_ptr<FileLine>>& lines,
                            size_t startIdx, size_t endIdx, size_t &progress);
-  void LoadFileWithChunks(const std::filesystem::path& filepath);
+  bool LoadFileWithChunks(const std::filesystem::path& filepath);
 
  protected:
   std::unordered_map<std::string, std::string> server_info;
@@ -24,7 +24,7 @@ class TacFile {
  public:
   TacFile() = default;
 
-  void LoadFile(const std::filesystem::path& filepath);
+  bool LoadFile(const std::filesystem::path& filepath);
 
   void PrintPlayers(std::ostream& strm);
   void PrintAllPlayerRuns(std::ostream& strm);
