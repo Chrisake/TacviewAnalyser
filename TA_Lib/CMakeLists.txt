@@ -6,11 +6,14 @@ set(PROJECT_MINOR_VERSION 1)
 add_library(${PROJECT_NAME} STATIC
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/tac_file.cpp" 
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/sim_object.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/utils.cpp"
+	"${TA_COM_DIRECTORY}/src/utils.cpp"
 )
 add_library(${PROJECT_NAME}_sta ALIAS ${PROJECT_NAME})
 
-target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_include_directories(${PROJECT_NAME} PRIVATE 
+	"${CMAKE_CURRENT_SOURCE_DIR}/include"
+	"${TA_COM_DIRECTORY}/include"
+)
 
 find_package(argparse CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
