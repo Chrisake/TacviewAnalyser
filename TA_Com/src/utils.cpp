@@ -1,5 +1,5 @@
 #include "utils.hpp"
-
+#include <print>
 #include <string>
 
 int unzip_file(const std::filesystem::path &origin,
@@ -33,13 +33,13 @@ int unzip_file(const std::filesystem::path &origin,
       return -1;
     }
 
-    char filepath[512];
-    snprintf(filepath, sizeof(filepath), "%s/%s", dest.c_str(), filename);
+    std::filesystem::create_directories(dest);
+    std::string filepath = (dest / std::filesystem::path(filename)).string();
 
     FILE *f;
-    errno_t err = fopen_s(&f, filepath, "wb");
+    errno_t err = fopen_s(&f, filepath.c_str(), "wb");
     if (err || f == nullptr) {
-      printf("Cannot open destination file %s\n", filepath);
+      std::print("Cannot open destination file {}\n", filepath);
       unzCloseCurrentFile(uf);
       unzClose(uf);
       return -1;
@@ -85,3 +85,17 @@ void printDuration(std::chrono::milliseconds duration, std::ostream &strm) {
        << std::setw(2) << std::setfill('0') << minutes.count() << ":"
        << std::setw(2) << std::setfill('0') << seconds.count();
 }
+
+std::string getRandomString(size_t length, std::string_view characters) { std::string result;
+  result.resize(length);
+  for (size_t i = 0; i < length; ++i) {
+    result[i] = characters[rand() % characters.size()];
+  }
+  return result;
+}
+
+std::string getRandomSring(size_t length) {
+  return getRandomString(length, "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+'\\\";:,.<>/?");
+}
+
+std::string getRandomGUID() { return getRandomString(36, "0123456789abcdef"); }
