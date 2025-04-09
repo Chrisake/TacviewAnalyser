@@ -40,3 +40,5 @@ out/
 app.aps
 
 .idea/
+
+conan/

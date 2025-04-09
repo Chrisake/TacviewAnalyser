@@ -10,16 +10,18 @@
 #define PROXIMITY_LATI_THRESHOLD 0.003
 #define PROXIMITY_ALTI_THRESHOLD 30
 
+#undef max // Undefine the 'max' macro to avoid conflicts with std::numeric_limits
+
 Location::Location()
-    : longtitude(std::numeric_limits<float>::max()),
-      latitude(std::numeric_limits<float>::max()),
-      altitude(std::numeric_limits<float>::max()),
-      roll(std::numeric_limits<float>::max()),
-      pitch(std::numeric_limits<float>::max()),
-      yaw(std::numeric_limits<float>::max()),
-      x(std::numeric_limits<float>::max()),
-      y(std::numeric_limits<float>::max()),
-      heading(std::numeric_limits<float>::max()) {}
+   : longtitude(std::numeric_limits<float>::max()),
+     latitude(std::numeric_limits<float>::max()),
+     altitude(std::numeric_limits<float>::max()),
+     roll(std::numeric_limits<float>::max()),
+     pitch(std::numeric_limits<float>::max()),
+     yaw(std::numeric_limits<float>::max()),
+     x(std::numeric_limits<float>::max()),
+     y(std::numeric_limits<float>::max()),
+     heading(std::numeric_limits<float>::max()) {}
 
 static inline float getParam(const char* p) {
   if (p == nullptr || *p == 0 || *p == '|')

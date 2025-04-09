@@ -15,9 +15,11 @@ std::regex pattern = std::regex(
     R"((?:^|\n)(#?)(-?[0-9a-f.]+)(?:,T=([-\d.|]*)(?:$|,Type=((?:Weapon\+Missile|Air\+FixedWing)[^,]*),Name=([^,]*)(?:,Pilot=([^,]*))?(?:,Group=([^,]*))?,Color=(Blue|Red)[^\n]*)?)?(?=$|\n))",
     std::regex_constants::optimize);
 
-static void progressThread(const std::vector<size_t>& prog,
-                           const size_t total_size, size_t& lines_processed,
-                           size_t& total_lines, bool& done) {
+static void progressThread(const std::vector<size_t> &prog,
+                           const size_t               total_size,
+                           size_t                    &lines_processed,
+                           size_t                    &total_lines,
+                           bool                      &done) {
   using namespace indicators;
   ProgressBar progress{
       option::BarWidth{80},
@@ -44,7 +46,7 @@ static void progressThread(const std::vector<size_t>& prog,
       if (file_parsed) {
         current_prog += total_size;
       } else {
-        for (const auto& p : prog) {
+        for (const auto &p : prog) {
           current_prog += p;
         }
         if (current_prog >= total_size) {
@@ -62,37 +64,35 @@ static void progressThread(const std::vector<size_t>& prog,
   }
 }
 
-void TacFile::LoadFileWithChunks(const std::filesystem::path& filepath) {
-  uint64_t extraction_time = 0;
-  uint64_t file_read_time = 0;
+bool TacFile::LoadFileWithChunks(const std::filesystem::path &filepath) {
+  uint64_t                               extraction_time = 0;
+  uint64_t                               file_read_time = 0;
   std::unique_ptr<std::filesystem::path> txt_file_path;
-  std::string fileContents;
-  MEASURE_TIME(extraction_time,
-               txt_file_path = std::unique_ptr<std::filesystem::path>(
-                   PrepareACMIFile(filepath));)
-  std::cout << "Extraction time  : " << extraction_time / 1000000.0f << "s\n";
+  std::string                            fileContents;
+  MEASURE_TIME(extraction_time, txt_file_path = std::unique_ptr<std::filesystem::path>(PrepareACMIFile(filepath));)
   if (!txt_file_path.get()) {
     std::cerr << "Could not prepare file\n";
-    return;
+    return false;
   }
-
+  std::cout << "Extraction time  : " << extraction_time / 1000000.0f << "s\n";
   std::string path = txt_file_path->string();
 
   MEASURE_TIME(
       file_read_time, std::ifstream file(path); if (!file.is_open()) {
         std::cerr << "Could not open extracted file\n";
-        return;
+        return false;
       }
 
       std::stringstream buffer;
       buffer.clear(); buffer << file.rdbuf(); fileContents = buffer.str();)
+
   std::cout << "File read time: " << file_read_time / 1000000.0f << "s\n";
-  const auto processor_count = std::thread::hardware_concurrency();
-  const auto chunk_size = fileContents.size() / processor_count;
+  const auto               processor_count = std::thread::hardware_concurrency();
+  const auto               chunk_size = fileContents.size() / processor_count;
   std::vector<std::thread> threads;
   threads.reserve(processor_count);
-  std::vector<std::pair<size_t, size_t>> chunks;
-  std::vector<size_t> progress(processor_count, 0);
+  std::vector<std::pair<size_t, size_t>>              chunks;
+  std::vector<size_t>                                 progress(processor_count, 0);
   std::vector<std::vector<std::unique_ptr<FileLine>>> file_lines;
   chunks.reserve(processor_count);
   file_lines.reserve(processor_count);
@@ -117,15 +117,13 @@ void TacFile::LoadFileWithChunks(const std::filesystem::path& filepath) {
   size_t lines_processed = 0;
   size_t total_lines = total_size / AVG_CHARACTERS_PER_LINE;
   size_t real_lines = 0;
-  bool finished = false;
+  bool   finished = false;
 
-  std::thread progress_thread(progressThread, std::cref(progress), total_size,
-                              std::ref(lines_processed), std::ref(total_lines),
-                              std::ref(finished));
+  std::thread progress_thread(progressThread, std::cref(progress), total_size, std::ref(lines_processed),
+                              std::ref(total_lines), std::ref(finished));
 
   for (size_t i = 0; i < processor_count; i++) {
-    threads.emplace_back(TacFile::AnalyseChunk, std::cref(fileContents),
-                         std::ref(file_lines[i]), chunks[i].first,
+    threads.emplace_back(TacFile::AnalyseChunk, std::cref(fileContents), std::ref(file_lines[i]), chunks[i].first,
                          chunks[i].second, std::ref(progress[i]));
   }
 
@@ -134,11 +132,8 @@ void TacFile::LoadFileWithChunks(const std::filesystem::path& filepath) {
   for (size_t i = 0; i < processor_count; i++) {
     threads[i].join();
     real_lines += file_lines[i].size();
-    total_lines =
-        real_lines +
-        (processor_count - 1 - i) *
-            (total_size / (processor_count * AVG_CHARACTERS_PER_LINE));
-    for (const auto& line : file_lines[i]) {
+    total_lines = real_lines + (processor_count - 1 - i) * (total_size / (processor_count * AVG_CHARACTERS_PER_LINE));
+    for (const auto &line : file_lines[i]) {
       line->ProcessLine(active_objects, tracked_objects, pilot_runs, cur_time);
     }
     lines_processed += file_lines[i].size();
@@ -146,13 +141,15 @@ void TacFile::LoadFileWithChunks(const std::filesystem::path& filepath) {
 
   finished = true;
   progress_thread.join();
+  return true;
 }
 
-void TacFile::AnalyseChunk(const std::string& fileContents,
-                           std::vector<std::unique_ptr<FileLine>>& lines,
-                           size_t startIdx, size_t endIdx, size_t& progress) {
-  std::sregex_iterator it(fileContents.begin() + startIdx,
-                          fileContents.begin() + endIdx, pattern);
+void TacFile::AnalyseChunk(const std::string                      &fileContents,
+                           std::vector<std::unique_ptr<FileLine>> &lines,
+                           size_t                                  startIdx,
+                           size_t                                  endIdx,
+                           size_t                                 &progress) {
+  std::sregex_iterator it(fileContents.begin() + startIdx, fileContents.begin() + endIdx, pattern);
   std::sregex_iterator end;
   while (it != end) {
     progress = it->position() + it->length();
@@ -175,8 +172,7 @@ void TacFile::AnalyseChunk(const std::string& fileContents,
         lines.emplace_back(new DespawnLine(-id));
       } else if (match[4].length() > 0) {
         // Its a spawn
-        lines.emplace_back(new SpawnLine(id, match[3].str(), match[5].str(),
-                                         match[4].str(), match[6].str(),
+        lines.emplace_back(new SpawnLine(id, match[3].str(), match[5].str(), match[4].str(), match[6].str(),
                                          match[7].str(), match[8].str()));
       } else {
         // Its an update
