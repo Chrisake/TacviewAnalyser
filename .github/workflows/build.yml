@@ -1,59 +1,51 @@
-
-name: CI
-on: push
+on: pull_request
 jobs:
   build:
+    runs-on: ${{ matrix.os }}
     strategy:
-        matrix:
-          cc: [ gcc, clang ]
-    runs-on: ubuntu-latest
+      matrix:
+        os: [ubuntu-latest]
+        include:
+          - os: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: docker://lucteo/ghaction-conan-cmake:latest
+      - uses: docker://chrisake/conan-cmake:latest
+      - name: Setup Python
+        uses: actions/setup-python@v4.6.0
         with:
-          cc: ${{ matrix.cc }}
-  coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: docker://lucteo/ghaction-conan-cmake:latest
+          python-version: "3.10"
+      - name: Install Conan
+        run: pip install conan
+
+      - name: Install Ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+        
+      - name: Generate cache key
+        id: cache-key
+        run: |
+          echo "key=$(cat conanfile.py conan.lock* profiles/* | sha256sum)" >> $GITHUB_OUTPUT
+
+      - name: Restore Conan cache
+        uses: actions/cache@v3
+        id: conan-cache
         with:
-          coverage: codecov
-  valgrind:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: docker://lucteo/ghaction-conan-cmake:latest
-        with:
-          ctestflags: '-D ExperimentalMemCheck'
-  clang-sanitizers:
-    name: build with clang -fsanitize
-    strategy:
-        matrix:
-          cflags:
-            - -fsanitize=address
-            - -fsanitize=memory
-            - -fsanitize=undefined
-            - -fsanitize=dataflow
-            - -fsanitize=safe-stack
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: docker://lucteo/ghaction-conan-cmake:latest
-        with:
-          cc: clang
-          cflags: ${{ matrix.cflags }}
-  clang-format:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: docker://lucteo/ghaction-conan-cmake:latest
-        with:
-          analyzer: clang-format
-  clang-analyzers:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: docker://lucteo/ghaction-conan-cmake:latest
-        with:
-          analyzer: clang-tidy
+          path: ~/.conan2
+          key: ${{ steps.cache-key.outputs.key }}
+          restore-keys: |
+            ${{ steps.cache-key.outputs.key }}
+            conan-
+
+      - name: Create Default Conan Profile
+        run: conan profile detect --exist-ok
+      - name: Conan Install dependencies
+        run: conan install . --build=missing --profile:build=conan/gcc_profile
+      
+
+      - name: Print pwd (debug)
+        working-directory: build
+        run: pwd & ls -all
+      - name: CMake Generate
+        run: cmake --preset conan-release
+      - name: CMake Build
+        run: cmake --build build --preset conan-release
+      

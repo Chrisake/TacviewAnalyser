@@ -41,4 +41,4 @@ app.aps
 
 .idea/
 
-conan/
+build/

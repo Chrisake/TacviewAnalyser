@@ -3,6 +3,7 @@
 #include <limits>
 #include <regex>
 
+#include <cmath>
 #include <string_view>
 #include "utils.hpp"
 

@@ -1,6 +1,7 @@
 #include "utils.hpp"
-#include <print>
 #include <string>
+#include <cstdlib>
+
 
 int unzip_file(const std::filesystem::path &origin,
                const std::filesystem::path &destination) {
@@ -39,7 +40,7 @@ int unzip_file(const std::filesystem::path &origin,
     FILE *f;
     errno_t err = fopen_s(&f, filepath.c_str(), "wb");
     if (err || f == nullptr) {
-      std::print("Cannot open destination file {}\n", filepath);
+      printf("Cannot open destination file %s\n", filepath.c_str());
       unzCloseCurrentFile(uf);
       unzClose(uf);
       return -1;
@@ -89,7 +90,7 @@ void printDuration(std::chrono::milliseconds duration, std::ostream &strm) {
 std::string getRandomString(size_t length, std::string_view characters) { std::string result;
   result.resize(length);
   for (size_t i = 0; i < length; ++i) {
-    result[i] = characters[rand() % characters.size()];
+    result[i] = characters[std::rand() % characters.size()];
   }
   return result;
 }
