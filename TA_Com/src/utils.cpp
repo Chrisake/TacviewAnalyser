@@ -2,6 +2,7 @@
 #include <print>
 #include <string>
 
+
 int unzip_file(const std::filesystem::path &origin,
                const std::filesystem::path &destination) {
   std::string orig = origin.string();
@@ -89,7 +90,7 @@ void printDuration(std::chrono::milliseconds duration, std::ostream &strm) {
 std::string getRandomString(size_t length, std::string_view characters) { std::string result;
   result.resize(length);
   for (size_t i = 0; i < length; ++i) {
-    result[i] = characters[rand() % characters.size()];
+    result[i] = characters[std::rand() % characters.size()];
   }
   return result;
 }
