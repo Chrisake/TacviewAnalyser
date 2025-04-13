@@ -6,6 +6,7 @@
 #include <cmath>
 #include <string_view>
 #include "utils.hpp"
+#include "logging.hpp"
 
 #define PROXIMITY_LONG_THRESHOLD 0.003
 #define PROXIMITY_LATI_THRESHOLD 0.003

@@ -17,7 +17,7 @@ class TacviewAnalyser(ConanFile):
                 "without_graph": True,
                 "without_serialization": True,
                 "without_wave": True,
-                "without_log": True
+                "without_log": False
             }
         )
         self.requires("argparse/3.2")
@@ -27,6 +27,7 @@ class TacviewAnalyser(ConanFile):
         self.requires("minizip/1.3.1")
         self.requires("nlohmann_json/3.11.3")
         self.requires("yaml-cpp/0.8.0")
+        self.requires("spdlog/1.15.1")
 
 
     def layout(self):

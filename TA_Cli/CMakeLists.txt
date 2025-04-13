@@ -3,10 +3,11 @@ project("TacViewAnalyser_cli")
 
 find_package(argparse CONFIG REQUIRED)
 find_package(indicators CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
 
 # Add source to this project's executable.
 add_executable (${PROJECT_NAME}   
-		"${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/source/main.cpp"
 		"${PROJECT_ROOT_DIRECTORY}/app.rc"
 )
 
@@ -19,7 +20,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} PRIVATE 
 						TacViewAnalyser_lib_sta
 						argparse::argparse
-						indicators::indicators)
+						indicators::indicators
+						spdlog::spdlog
+)
 
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_DIRECTORY ${CMAKE_BINARY_DIR}/package)
