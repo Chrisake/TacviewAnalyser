@@ -1,20 +1,30 @@
 #include "utils.hpp"
 #include <string>
 #include <cstdlib>
+#include "logging.hpp"
+
+static std::shared_ptr<spdlog::logger> logger = nullptr;
+
+void init_logger() {
+  if (!logger) {
+    logger = initialize_logger("utils", spdlog::level::level_enum::info);
+  }
+}
 
 
 int unzip_file(const std::filesystem::path &origin,
                const std::filesystem::path &destination) {
+  init_logger();
   std::string orig = origin.string();
   std::string dest = destination.string();
   unzFile uf = unzOpen(orig.c_str());
   if (uf == NULL) {
-    printf("Cannot open %s\n", orig.c_str());
+    logger->error("Cannot open zip file: {}", orig);
     return -1;
   }
 
   if (unzGoToFirstFile(uf) != UNZ_OK) {
-    printf("Error going to first file\n");
+    logger->error("Error going to first file in zip: {}", orig);
     unzClose(uf);
     return -1;
   }
@@ -23,13 +33,13 @@ int unzip_file(const std::filesystem::path &origin,
     char filename[256];
     if (unzGetCurrentFileInfo64(uf, NULL, filename, sizeof(filename), NULL, 0,
                                 NULL, 0) != UNZ_OK) {
-      printf("Error getting file info\n");
+      logger->error("Error getting file info in zip: {}", orig);
       unzClose(uf);
       return -1;
     }
 
     if (unzOpenCurrentFile(uf) != UNZ_OK) {
-      printf("Error opening file %s\n", filename);
+      logger->error("Error opening file in zip: {}", filename);
       unzClose(uf);
       return -1;
     }
@@ -38,9 +48,9 @@ int unzip_file(const std::filesystem::path &origin,
     std::string filepath = (dest / std::filesystem::path(filename)).string();
 
     FILE *f;
-    errno_t err = fopen_s(&f, filepath.c_str(), "wb");
+    int err = fopen_s(&f, filepath.c_str(), "wb");
     if (err || f == nullptr) {
-      printf("Cannot open destination file %s\n", filepath.c_str());
+      logger->error("Cannot open destination file: {}", filepath);
       unzCloseCurrentFile(uf);
       unzClose(uf);
       return -1;
@@ -51,7 +61,7 @@ int unzip_file(const std::filesystem::path &origin,
     do {
       bytes_read = unzReadCurrentFile(uf, buffer, sizeof(buffer));
       if (bytes_read < 0) {
-        printf("Error reading file %s\n", filename);
+        logger->error("Error reading file: {}", filename);
         fclose(f);
         unzCloseCurrentFile(uf);
         unzClose(uf);
